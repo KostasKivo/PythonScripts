@@ -28,8 +28,11 @@ def checking_folders(p, n):
 
             splited_filename = f.split(".")
 
-            os.rename(dirpath + "/" + f, dirpath + "/" + n + str(counter) + "." + splited_filename[1])
-            counter += 1
+            try:
+                os.rename(dirpath + "/" + f, dirpath + "/" + n + str(counter) + "." + splited_filename[1])
+                counter += 1
+            except IndexError:
+                print("\n")
 
 
 def main():
