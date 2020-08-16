@@ -13,6 +13,8 @@ listOfInstances = [] # Where all insts are saved along with their information
 
 listOfNets = [] # Where all the nets are saved along with their insts
 
+outputInsts = [] # The insts that we are going to output to file
+
 def main():
 
 
@@ -22,15 +24,67 @@ def main():
 
 	sortMaxMinSwapLists() # Swap the min values
 
+	outputListFromNet()
+
+	# createOutputList()
+
 	writeFile()
+
+
+
+
+def outputListFromNet():
+	for i in range(0,len(listOfInstances)):
+		for net in listOfNets:
+			for net_inst in net.insts:
+				if listOfInstances[i].inum == net_inst.inum:
+
+					if net_inst.xcord > listOfInstances[i].xcord:
+
+						if net_inst.ycord > listOfInstances[i].ycord:
+							listOfInstances[i] = copy.deepcopy(net_inst)
+						elif net_inst.ycord > listOfInstances[i].ycord:
+							None
+						elif net_inst.ycord == listOfInstances[i].ycord:
+							listOfInstances[i] = copy.deepcopy(net_inst)
+
+					elif net_inst.ycord > listOfInstances[i].ycord:
+
+						if net_inst.xcord > listOfInstances[i].xcord:
+							listOfInstances[i] = copy.deepcopy(net_inst)
+						elif net_inst.xcord > listOfInstances[i].xcord:
+							None
+						elif net_inst.xcord == listOfInstances[i].xcord:
+							listOfInstances[i] = copy.deepcopy(net_inst)
+	
+
+# def createOutputList():
+
+# 	outputInsts.sort(key=lambda x:x.xcord, reverse = False)
+
+# 	for i in range(0,len(listOfInstances)):
+# 		for j in range(0,len(outputInsts)):
+# 			if listOfInstances[i].inum == outputInsts[j].inum:
+# 				listOfInstances[i] = copy.deepcopy(outputInsts[j])
+# 				None
+
+# 	outputInsts.sort(key=lambda x:x.ycord, reverse = False)
+
+
+# 	for i in range(0,len(listOfInstances)):
+# 		for j in range(0,len(outputInsts)):
+# 			if listOfInstances[i].inum == outputInsts[j].inum:
+# 				listOfInstances[i] = copy.deepcopy(outputInsts[j])
+# 				None
+# 	None
+
 
 
 def writeFile():
 	f = open("NewCoordinates_SerialNo.txt","w")
 
-	for x in listOfNets:
-		for i in x.insts:
-			f.write("inst_" + str(i.inum) + " " + str(i.xcord) + " " + str(i.ycord) + " " + i.snum + " " + i.ftype + "\n")
+	for i in listOfInstances:
+		f.write("inst_" + str(i.inum) + " " + str(i.xcord) + " " + str(i.ycord) + " " + i.snum + " " + i.ftype + "\n")
 
 
 
@@ -66,6 +120,8 @@ def sortMaxMinSwapLists():
 
 			if(isSameType(xmin.xcord,xmin.ycord,xmin.itype)): # Check if the same type, if they are we are done with xmin for Net
 				#print("Inst %s changed with inst %s coordinates %d %d"%(xmin.inum,xmax.inum,xmin.xcord,xmax.xcord))
+				xcopy = copy.deepcopy(xmin)
+				outputInsts.append(xcopy)
 				break
 			else:
 				index_xmax -= 1 # We move to the next xmax
@@ -94,6 +150,8 @@ def sortMaxMinSwapLists():
 
 			if(isSameType(ymin.ycord,ymin.ycord,ymin.itype)): # Check if the same type, if they are we are done with xmin for Net
 				#print("Inst %s changed with inst %s coordinates %d %d"%(xmin.inum,xmax.inum,xmin.xcord,xmax.xcord))
+				ycopy = copy.deepcopy(ymin)
+				outputInsts.append(ycopy)
 				break
 			else:
 				index_xmax -= 1 # We move to the next xmax
@@ -115,7 +173,9 @@ def isSameType(xcord,ycord,itype):
 
 def readNetFile():
 
-	with open("design.nets","r") as f: # Read the design.nets file
+	fileName = input("Please give the name of the design.nets file")
+
+	with open(fileName,"r") as f: # Read the design.nets file
 		for line in f: # For every line in file f
 			if line.split()[0] =="net": # Split the line into substring and get the first one, if its net get into if clause
 				p = Net(line.split()[1]) # Create a Net object with substring in position 1 as name
@@ -228,7 +288,10 @@ def iterateReversedListX(list,x): # For the current inst x, iterate the list of 
     
 
 def readInsts():
-	f1 = open("Coordinates_SerialNo.txt","r") # Open file
+
+	fileName = input("Please give the name of the coordinates file")
+
+	f1 = open(fileName,"r") # Open file
 
 	Lines = f1.readlines() # Gets all lines as String
 
@@ -253,8 +316,11 @@ def findInstancesTypesBasedOnInstNum(inum):
 	# For e.g. inst_451 is at line 450 of design.nodes so to save complexity I search that inst_num - 1 because probably it will be there
 	# The maximum difference is 4, 3340 is at line 3336 at design.nodes
 	# It's not in (inum-1) search more -- max is 4, 5 just to be sure, if input file will be bigger set bigger range
+
+	fileName = input("Please give the name of the design.nodes file")
+
 	for i in range(1,5):
-		line = linecache.getline("design.nodes", int(inum)-i) # If we are searching inst_451 probably its in design.nodes line 450
+		line = linecache.getline(filename, int(inum)-i) # If we are searching inst_451 probably its in design.nodes line 450
 
 		words = line.split() # Get each substring of string and put them in a table
 
