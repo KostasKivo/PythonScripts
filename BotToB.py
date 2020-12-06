@@ -33,7 +33,7 @@ driver.get(url)
 time.sleep(timer)
 #Technical things
 counter = 0
-friendList = ['@kostaskivotos','@kostaskivotos','@kostaskivotos'] # Vale ta onomata ton filon sou opos vlepeis edo me komma endiamesa '@','@','@', ..
+friendList = ['@','@','@'] # Vale ta onomata ton filon sou opos vlepeis edo me komma endiamesa '@','@','@', ..
 
 
 while(True):
